@@ -1,16 +1,20 @@
 $("body").append("<script src='http://cdn.staticfile.org/jquery/1.11.1/jquery.min.js'></script>");
-var styleSrc="";
+vvar styleSrc="";
 for(var x in document.styleSheets){
 	if(document.styleSheets[x].href!=null){
 	styleSrc+=x+"."+document.styleSheets[x].href+";<br/>";
 	}
 };
-$("body").append("<div class='LpsDomView LpsDomViewStyle'></div><style>.showDomArea{box-shadow:0 0 3px #f00;} .LpsDomViewStyle{text-align:left;color:#000;background:rgba(248,248,248,0.8);line-height:18px;padding:4px;z-index:99999999;white-space:normal,word-break:break-all;box-shadow:0 0 2px #008000;color:#484848;font-family:'sans-serif';font-size:14px;position:absolute}</style>");
+$("html").append("<input type='text' value='' id='LpsDomViewHtml' style='opacity:0;'/><div class='LpsDomView LpsDomViewStyle'></div><style>.showDomArea{box-shadow:0 0 3px #f00;} .LpsDomViewStyle{text-align:left;color:#000;background:rgba(248,248,248,0.8);line-height:18px;padding:4px;z-index:99999999;white-space:normal,word-break:break-all;box-shadow:0 0 2px #008000;color:#484848;font-family:'sans-serif';font-size:14px;position:absolute}</style>");
 $(document).mousemove(function(e){
 	$(".LpsDomView").empty();
 	$(".LpsDomView").css({"left":"auto","right":"auto","top":"auto","bottom":"auto"});
 		var obj=e.target;
 		$("*").removeClass('showDomArea');
+		//for(var xx in window.localStorage){alert(window.localStorage[xx]);};
+		$("#LpsDomViewHtml").val('');//清空input
+		$("#LpsDomViewHtml").val($(obj).html());//input装入新的内容
+		$("#LpsDomViewHtml").select();
 		var tagNameAll=[];
 		tagNameAll[0]
 		if(obj.className.length!=0){
