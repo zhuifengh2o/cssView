@@ -1,5 +1,6 @@
 $("body").append("<script src='http://cdn.staticfile.org/jquery/1.11.1/jquery.min.js'></script>");
-vvar styleSrc="";
+//鼠标放上显示该节点的父级节点，直到html节点及各个节点对应样式；
+var styleSrc="";
 for(var x in document.styleSheets){
 	if(document.styleSheets[x].href!=null){
 	styleSrc+=x+"."+document.styleSheets[x].href+";<br/>";
@@ -13,7 +14,16 @@ $(document).mousemove(function(e){
 		$("*").removeClass('showDomArea');
 		//for(var xx in window.localStorage){alert(window.localStorage[xx]);};
 		$("#LpsDomViewHtml").val('');//清空input
-		$("#LpsDomViewHtml").val($(obj).html());//input装入新的内容
+		var objHtml="<"+obj.tagName.toLowerCase();
+		if(obj.className.length!=0){//加上class
+			objHtml+=" class=\""+obj.className+"\"";
+		}
+		if(obj.id.length!=0){//加上id
+			objHtml+=" id=\""+obj.id+"\"";
+		}
+		objHtml+=">"
+		objHtml+=$(obj).html()+"</"+obj.tagName.toLowerCase()+">";
+		$("#LpsDomViewHtml").val(objHtml);//input装入新的内容
 		$("#LpsDomViewHtml").select();
 		var tagNameAll=[];
 		tagNameAll[0]
@@ -58,3 +68,4 @@ $(document).mousemove(function(e){
 					$(obj).addClass('showDomArea');//高亮显示目标节点
 		})
 			$(document).bind("keydown",function(e){if(e.keyCode==27){$(".LpsDomView").css("display","none");};})
+//鼠标放上显示该节点的父级节点，直到html节点及各个节点对应样式结束；
