@@ -60,7 +60,7 @@ $document.mousemove(function(e){
 					$(obj).addClass('showDomArea');//高亮显示目标节点
 		})
 			$document.bind("keydown",function(e){if(e.keyCode==27){$lpsdomview.css("display","none");};})
-			$document.delegate(".showDomArea","mouseover",function(e){
+			$document.delegate(".showDomArea","mousemove",function(e){
 //						$("#LpsDomViewHtml").val('');//input装入新的内容
 /***旧方法获取选中Dom的html代码开始
 					var obj=$(this)[0];
