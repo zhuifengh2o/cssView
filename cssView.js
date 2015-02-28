@@ -1,14 +1,14 @@
-$(window).load(function () {
-	$ALL=$("*");
-	window.$my =
+(function(){
+	//var $ALL=$("*");
+$(function(){
+	var $my =
 	{
 		// 初始化所有可能会不止一次要使用的查询
-		HTML : $("html"),
-		HEAD : $("head"),
 		DOCUMENT : $(document),
-		WINDOW : $(window)
+		WINDOW : $(window),
+		HTML : function(){return this.DOCUMENT.find("html")},
+		HEAD : function(){return this.DOCUMENT.find("head")}
 	};
-	$my.HTML.append("<script src='file://localhost/C:/operajs/jquery.min.js'></script>");
     var setstyles = {
         1: {
             url: "v.baidu.com",
@@ -25,12 +25,12 @@ $(window).load(function () {
         },
         4: {
             url: "www.xiaolinsi.com",
-            style: "",
+            style: ".tao_ad,.right_ad,.left_ad,ins{visibility:hidden;}",
             script: ""
         },
         5: {
             url: "image.baidu.com",
-            style: ".mod-img{box-shadow:0 0 4px #000;} .mod-pic-show img{box-shadow:0 0 4px #000;}",
+            style: "html,body{background:none;}.mod-img{border:1px solid #ccc;padding:4px;} .mod-img:hover{position:relative;z-index:999;} .mod-pic-show img{box-shadow:0 0 4px #000;} img:hover{transform:scale(1.5,1.5);}",
 			script:""
         },
         6: {
@@ -42,66 +42,44 @@ $(window).load(function () {
             url: "http://192.168.35.39:8886/",
             style: "",
 			script:""
-        }
+        },
+		8:{
+			url:"http://zhuifengh2o.7958.com/",
+			style:"",
+			script:""
+		}
     }
     var urlnow = document.location.toString();
-    for (e in setstyles) {
+    for (var e in setstyles) {
         if (urlnow.indexOf(setstyles[e].url) != -1) {
-            $("html").append("<style type='text/css'>" + setstyles[e].style + "</style><script type='text/javascript'>" + setstyles[e].script + "</script>");
+            $my.HTML().append("<style type='text/css'>" + setstyles[e].style + "</style><script type='text/javascript'>" + setstyles[e].script + "</script>");
         }
     }
 	//广告屏蔽
     var adword = ['tanx','ad', 'AD','Ad', 'BAIDU_DUP', 'cproIframe', 'jd_banner', '_haibao_openwindow', 'optimusPrimeContentId'];//屏蔽id,class关键字
     var notadword = ['read','load', 'head','Head','sinaads','play','HEAD','shadow','ready','padding','radius','trade'];//不要屏蔽的id class关键字
-    var removead=$("*").each(function () {
-        var idName = $(this).attr('id');
-        var adclassName = $(this).attr('class');
-        if ((typeof (idName) == 'undefined') & (typeof (adclassName) == 'undefined')) {
-            return;
-        } else {
-            for (var x in adword) {
-                var adwordn = adword[x];
-				var reg="^"+adwordn+"$";
-				var patt1=new RegExp(reg);
-                var stringNow = ''; //存储idName和adclassName
-                if (typeof (idName) != 'undefined') {
-					if(patt1.test(idName)){//如果完全匹配则删除
-						$(this).remove();
-						return;
-					};
-                    stringNow = idName;
-                };
-                if (typeof (adclassName) != 'undefined') {
-					if(patt1.test(adclassName)){//如果完全匹配则删除
-						$(this).remove();
-						return;
-					};
-                    stringNow += ',' + adclassName;
-                };
-                if (stringNow.indexOf(adwordn) != -1) {
-                    var hasnotadword = false;
-                    for (var y in notadword) {
-                        var notadwordn = notadword[y]
-                        if (stringNow.indexOf(notadwordn) != -1) {
-                            hasnotadword = true;
-                        }
-                    }
-                    if (!hasnotadword) {
-                        $(this).remove()
-                    }
-                };
-            }
-        }
-    });
-//	setInterval(removead,2000)
-//鼠标放上显示该节点的父级节点，直到html节点及各个节点对应样式；
+  // 		console.log($(this));
+$my.HTML().find("*").filter(function(){
+	var className=$(this).attr("class");
+	var idName=$(this).attr("id");
+	if(!~($.inArray(className,notadword))&&(!~($.inArray(idName,notadword)))){
+		var hasword=false;
+		for(var x in adword){
+			if(~((className+","+idName).indexOf(adword[x]))){hasword=true}
+			}
+		if(hasword){return true;}
+		}
+	}).css('visibility','hidden');
+//按‘esc’启用，再次按‘esc’键关闭。鼠标放上显示该节点的父级节点，直到html节点及各个节点对应样式；
 var styleSrc="";
 for(var x in document.styleSheets){
 	if(document.styleSheets[x].href){
 	styleSrc+=x+"."+document.styleSheets[x].href+";<br/>";
+	}else{
+	styleSrc+="含有页面样式;<br/>"
 	}
 };
-$my.HTML.append("<div style='opacity:1;position:fixed;left:-1000px;top:0;width:100px;overflow:hidden;' id='LpsDomViewHtmlCon'></div><input type='text' value='' id='LpsDomViewHtml' style='opacity:1;position:fixed;left:-1000px;top:0;width:100px;'/><div class='LpsDomView LpsDomViewStyle'></div><style>.showDomArea{box-shadow:0 0 3px #f050a0;text-shadow:0 0 1px #ddd;} .LpsDomViewStyle{display:none;text-align:left;color:#000;background:rgba(248,248,248,0.8);line-height:18px;padding:4px;z-index:99999999;white-space:normal,word-break:break-all;box-shadow:0 0 2px #008000;color:#484848;font-family:'sans-serif';font-size:14px;position:absolute}</style>");
+$my.HTML().append("<div style='opacity:1;position:fixed;left:-1000px;top:0;width:100px;overflow:hidden;' id='LpsDomViewHtmlCon'></div><input type='text' value='' id='LpsDomViewHtml' style='opacity:1;position:fixed;left:-1000px;top:0;width:100px;'/><div class='LpsDomView LpsDomViewStyle'></div><style>.showDomArea{box-shadow:0 0 3px #f050a0;text-shadow:0 0 1px #ddd;} .LpsDomViewStyle{display:none;text-align:left;color:#000;background:rgba(248,248,248,0.8);line-height:18px;padding:4px;z-index:99999999;white-space:normal,word-break:break-all;box-shadow:0 0 2px #008000;color:#484848;font-family:'sans-serif';font-size:14px;position:absolute}</style>");
 var $lpsdomview=$(".LpsDomView");//显示选中Dom样式的容器；
 var $LpsDomViewHtml=$("#LpsDomViewHtml");//选中Dom的容器;
 var $LpsDomViewHtmlCon=$("#LpsDomViewHtmlCon");//选中Dom的容器;
@@ -135,7 +113,7 @@ var $LpsDomViewHtmlCon=$("#LpsDomViewHtmlCon");//选中Dom的容器;
 								}
 								var i=0;
 									var $objParents=$obj.parents();
-								for(i=1; i<$objParents.length+1;i++){
+								/***for(i=1; i<$objParents.length+1;i++){
 									var $objParentsi=$objParents[i-1];
 									if($objParentsi.className){
 										tagNameN=$objParentsi.tagName.toLowerCase()+"."+$objParentsi.className
@@ -145,7 +123,15 @@ var $LpsDomViewHtmlCon=$("#LpsDomViewHtmlCon");//选中Dom的容器;
 									tagNameAll[i]=tagNameN;
 										};
 								tagNameAll.reverse();//数组翻转;
-								tagNameAllN+="</br> -> "+tagNameAll.join("</br> -> ");
+								tagNameAllN+="</br> -> "+tagNameAll.join("</br> -> ");***/
+								for(i=$objParents.length-1;i>-1;i--){
+										var $objParentsi=$objParents[i];
+										tagNameAllN+="<br />-> "+$objParentsi.tagName.toLowerCase();
+									if($objParentsi.className){
+										tagNameAllN+="."+$objParentsi.className;
+									}
+								}
+								tagNameAllN+="<br /> -> "+tagNameAll[0];
 								$lpsdomview.append(tagNameAllN);	
 
 								$lpsdomview.css({"top":e.pageY+50+"px","left":e.pageX+20+"px"});
@@ -179,4 +165,6 @@ var $LpsDomViewHtmlCon=$("#LpsDomViewHtmlCon");//选中Dom的容器;
 						$LpsDomViewHtml.select();
 			})
 //鼠标放上显示该节点的父级节点，直到html节点及各个节点对应样式结束；
-})
+
+
+})})()
